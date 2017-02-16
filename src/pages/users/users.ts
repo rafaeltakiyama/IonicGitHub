@@ -26,6 +26,7 @@ export class UsersPage {
   searchControl: FormControl;
   searchTerm: string = '';
 
+  searching: any = false;
 
   constructor(public navCtrl: NavController, public navParams: NavParams, private githubUsers: GithubUsers) {
     githubUsers.load().subscribe(users => {
@@ -37,22 +38,27 @@ export class UsersPage {
 
   ionViewDidLoad() {
     console.log('ionViewDidLoad UsersPage');
-    this.setFilteredItems();
- 
-        this.searchControl.valueChanges.debounceTime(700).subscribe(search => {
- 
-            this.setFilteredItems();
- 
-        });
+    // this.setFilteredItems();
+    this.searchControl.valueChanges.debounceTime(700).subscribe(search => {
+        this.searching = false;
+        this.setFilteredItems();
+    });
   }
+
+  // onSearchInput(){
+  //   this.searching = true;
+  // }
 
   setFilteredItems() {
 
     if (this.searchTerm === '') {
       this.users = this.originalUsers;
+       this.searching = false;
     } else {
+      this.searching = true;
       this.githubUsers.searchUsers(this.searchTerm).subscribe(users => {
-            this.users = users
+        this.users = users
+        this.searching = false;
       });
     }
   }
